@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 pd.set_option('display.max_columns', None)
 pd.set_option('display.expand_frame_repr', False)
 
-df = pd.read_csv("./beers/recipeData.csv", encoding="latin1")
+df = pd.read_csv("./recipeData.csv", encoding="latin1")
 orig_leng = len(df)
 df = df.drop(
     columns=["BeerID", "UserId", "URL", "Name", "Style", "PrimingMethod", "PrimingAmount", "PitchRate", "MashThickness",
