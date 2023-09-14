@@ -42,6 +42,7 @@ for column in columns_to_bin:
 # ax.scatter(df[df.columns[4]], df[df.columns[9]], cmap=cm_bright, edgecolors="k")
 # fig.savefig("./rapport/ABV-BoilGravity.png")
 
+##### PREDICTION ABV #####
 X, y = df["OG"].values.reshape(-1, 1), df["ABV"]
 X2 = df["OG"].values.reshape(-1, 1)
 
@@ -53,18 +54,30 @@ predictions = linear.predict(X2)
 
 print(predictions)
 
-
 plt.scatter(X2, predictions, edgecolors="k")
 plt.xlabel("Prédictions")
 plt.ylabel("Vraies valeurs (ABV)")
-plt.savefig("./prediction.png")
+plt.savefig("./predictionABV.png")
 plt.show()
 
-# figure = plt.figure()
-# ax = plt.subplot()
-# ax.scatter(predictions[:, 0], predictions[:, 1], edgecolors="k")
-# figure.savefig("./prediction.png")
-#print(df)
+##### PREDICTION IBU #####
+# X, y = df["OG"].values.reshape(-1, 1), df["IBU"]
+# X2 = df["OG"].values.reshape(-1, 1)
+
+# linear = linear_model.LinearRegression(fit_intercept=False)
+
+# linear.fit(X, y)
+
+# predictions = linear.predict(X2)
+
+# print(predictions)
+
+# plt.scatter(X2, predictions, edgecolors="k")
+# plt.xlabel("Prédictions")
+# plt.ylabel("Vraies valeurs (IBU)")
+# plt.savefig("./predictionIBU.png")
+# plt.show()
+
 
 plt.matshow(df.corr())
 plt.xticks(range(df.select_dtypes(['number']).shape[1]), df.select_dtypes(['number']).columns, fontsize=14, rotation=45)
