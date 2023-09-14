@@ -1,0 +1,27 @@
+Mercredi
+    AM 
+    PM Nettoyage  Analyse exloratoire
+        gestion des valeurs abérantes
+        Gestion des valeurs manquantes et profiling, 
+
+Jeudi
+    AM Nettoyage  Analyse exloratoire
+        Features engineering
+        Binning et one hot, création de features   
+    PM Entrainer les premiers modèles
+        Modèles linéraires et polynomiaux            
+
+
+Vendredi
+    AM Rendre le proto
+    PM Choix et entrainement du modèle de prédiction
+
+
+Lundi
+    AM Evaluation du modèle
+    PM Travail l'appli Commencer la pres 
+
+
+Mardi
+    AM Finir la presentation
+    PM Soutenance
