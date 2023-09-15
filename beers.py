@@ -7,6 +7,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.expand_frame_repr', False)
@@ -41,36 +43,39 @@ columns_to_bin = ["Size(L)", "OG", "FG", "Color", "BoilSize"]
 for column in columns_to_bin:
     df[f"{column}_Binned"] = pd.qcut(df[column], q=5, labels=False, duplicates="drop")
 
-##### EVALUATION DU MODELE (MSE) #####
-X, y = df["OG"].values.reshape(-1, 1), df["ABV"]
-X2 = df["OG"].values.reshape(-1, 1)
-linear = linear_model.LinearRegression(fit_intercept=False)
 
-linear.fit(X, y)
-
-predictions = linear.predict(X2)
-
+##### SCORE DE PREDICTION #####
+X = df["OG"].values.reshape(-1, 1)
 y = df["ABV"]
 
-y_pred = predictions
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-mse = np.mean((y - y_pred) ** 2)
+model = LinearRegression()
 
-print("Mean Squared Error (MSE) :", mse)
+model.fit(X_train, y_train)
 
-##### PREDICTION NON LINEAIRE POLYNOMIAL #####    
-# X = df["BoilTime"].values.reshape(-1, 1)
-# y = df["ABV"]
-# degree = 2  
-# poly_features = PolynomialFeatures(degree=degree)
-# X_poly = poly_features.fit_transform(X.reshape(-1, 1))
+y_pred = model.predict(X_test)
 
-# model = LinearRegression()
-# model.fit(X_poly, y)
+score = r2_score(y_test, y_pred)
 
-# x_pred = np.linspace(min(X), max(X), 100) 
-# X_pred_poly = poly_features.transform(x_pred.reshape(-1, 1))
-# y_pred = model.predict(X_pred_poly)
+print("Score de prédiction :", score)
+
+##### EVALUATION DU MODELE (MSE) #####
+# X, y = df["OG"].values.reshape(-1, 1), df["IBU"]
+# X2 = df["OG"].values.reshape(-1, 1)
+# linear = linear_model.LinearRegression(fit_intercept=False)
+
+# linear.fit(X, y)
+
+# predictions = linear.predict(X2)
+
+# y = df["IBU"]
+
+# y_pred = predictions
+
+# mse = np.mean((y - y_pred) ** 2)
+
+# print("Mean Squared Error (MSE) :", mse)
 
 # plt.scatter(X, y, label='Données originales')
 # plt.plot(x_pred, y_pred, color='red', label='Régression polynomiale')
@@ -129,3 +134,17 @@ print("Mean Squared Error (MSE) :", mse)
 # plt.ylabel("Vraies valeurs (IBU)")
 # plt.savefig("./predictionIBU.png")
 # plt.show()
+
+##### PREDICTION NON LINEAIRE POLYNOMIAL #####    
+# X = df["BoilTime"].values.reshape(-1, 1)
+# y = df["ABV"]
+# degree = 2  
+# poly_features = PolynomialFeatures(degree=degree)
+# X_poly = poly_features.fit_transform(X.reshape(-1, 1))
+
+# model = LinearRegression()
+# model.fit(X_poly, y)
+
+# x_pred = np.linspace(min(X), max(X), 100) 
+# X_pred_poly = poly_features.transform(x_pred.reshape(-1, 1))
+# y_pred = model.predict(X_pred_poly)
