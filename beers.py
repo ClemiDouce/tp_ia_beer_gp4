@@ -9,6 +9,9 @@ from sklearn.metrics import mean_squared_error
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
+from sklearn.model_selection import cross_val_score, KFold
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.impute import SimpleImputer
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.expand_frame_repr', False)
@@ -43,22 +46,95 @@ columns_to_bin = ["Size(L)", "OG", "FG", "Color", "BoilSize"]
 for column in columns_to_bin:
     df[f"{column}_Binned"] = pd.qcut(df[column], q=5, labels=False, duplicates="drop")
 
+##### RANDOM FOREST IBU #####
+X = df.drop(columns=["IBU"])  
+y = df["IBU"]
 
-##### SCORE DE PREDICTION #####
-X = df["OG"].values.reshape(-1, 1)
-y = df["ABV"]
+imputer = SimpleImputer(strategy='mean')
+
+X = imputer.fit_transform(X)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-model = LinearRegression()
+column_names = df.drop(columns=["IBU"]).columns
 
-model.fit(X_train, y_train)
+random_forest = RandomForestRegressor(random_state=42)
+random_forest.fit(X_train, y_train)
 
-y_pred = model.predict(X_test)
+y_pred = random_forest.predict(X_test)
 
-score = r2_score(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred)
+print(f"Mean Squared Error: {mse}")
 
-print("Score de prédiction :", score)
+feature_importance = random_forest.feature_importances_
+print("Feature Importance:")
+for feature, importance in zip(column_names, feature_importance):
+    print(f"{feature}: {importance}")
+
+##### SCORE DE PREDICTION IBU KFOLD #####
+# X = df[['OG']].values
+# y = df['IBU'].values
+
+# model = LinearRegression()
+
+# kf = KFold(n_splits=5, shuffle=True, random_state=0)
+
+# scores = cross_val_score(model, X, y, cv=kf, scoring='r2')
+
+# r2_moyen = scores.mean()
+
+# model.fit(X, y)
+
+# nouvelle_og = np.array([[1.063]])  
+# prediction_ibu = model.predict(nouvelle_og)
+
+# print(r2_moyen)
+
+# print(f"Prédiction IBU pour OG = {nouvelle_og[0][0]} : {prediction_ibu[0]}")
+
+##### SCORE DE PREDICTION ABV & IBU #####
+# X = df["OG"].values.reshape(-1, 1)
+
+# y_abv = df["ABV"]
+# y_ibu = df["IBU"]
+
+# X_train, X_test, y_train_abv, y_test_abv = train_test_split(
+#     X, y_abv, test_size=0.2, random_state=42)
+
+# _, _, y_train_ibu, y_test_ibu = train_test_split(
+#     X, y_ibu, test_size=0.2, random_state=42)
+
+# model = LinearRegression()
+# model.fit(X_train, y_train_abv)
+# y_pred_abv = model.predict(X_test)
+# score_abv = r2_score(y_test_abv, y_pred_abv)
+
+# print("Score de prédiction ABV :", score_abv)
+
+# model = LinearRegression()
+# model.fit(X_train, y_train_ibu)
+# y_pred_ibu = model.predict(X_test)
+# score_ibu = r2_score(y_test_ibu, y_pred_ibu)
+
+# print("Score de prédiction IBU :", score_ibu)
+
+
+##### SCORE DE PREDICTION ABV #####
+# X = df["OG"].values.reshape(-1, 1)
+# y = df["ABV"]
+
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+# model = LinearRegression()
+
+# model.fit(X_train, y_train)
+
+# y_pred = model.predict(X_test)
+
+# score = r2_score(y_test, y_pred)
+
+# print("Score de prédiction :", score)
 
 ##### EVALUATION DU MODELE (MSE) #####
 # X, y = df["OG"].values.reshape(-1, 1), df["IBU"]
